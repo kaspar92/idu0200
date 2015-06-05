@@ -1,0 +1,22 @@
+.tree ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.tree ul:not(:first-child) {
+
+}
+
+.tree ul:not(:first-child) li {
+    padding-left: 15px;
+    border-left: 2px solid #CCC;
+    margin-bottom: 10px;
+}
+
+.tree ul:not(:first-child) li div {
+    margin-bottom: 10px;
+}
+
+.tree .top-level {
+    text-transform: uppercase;
+}

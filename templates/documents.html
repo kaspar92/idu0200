@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+    {% if documents %}
+    <table class="uk-table">
+        <thead>
+            <th>Nr</th>
+            <th>Dokumendi nimi</th>
+            <th>Kirjeldus</th>
+            <th>Loomise aeg</th>
+        </thead>
+        <tbody>
+            {% for doku in documents %}
+            <tr>
+                <td>{{ doku.document }}</td>
+                <td>{{ doku.name }}</td>
+                <td>{{ doku.description }}</td>
+                <td>{{ doku.created|date:'d.m.Y H:i' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <div class="uk-alert uk-alert-danger">Selles kategoorias pole ühtegi dokumenti.</div>
+    {% endif %}
+{% endblock %}

@@ -10,7 +10,7 @@ def sidebar(request):
 
     document_catalogs = DocCatalog.objects.filter(level=1)
     for catalog in document_catalogs:
-        subcatalogs = DocCatalog.objects.filter(level=2, upper_catalog=catalog.doc_catalog)
+        subcatalogs = DocCatalog.objects.filter(level=2, upper_catalog_fk=catalog.doc_catalog)
         setattr(catalog, 'sub_catalogs', subcatalogs)
 
     data = {

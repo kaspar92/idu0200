@@ -1,26 +1,74 @@
 {% extends 'base.html' %}
 
 {% block page_content %}
-    {% if documents %}
-    <table class="uk-table">
-        <thead>
-            <th>Nr</th>
-            <th>Dokumendi nimi</th>
-            <th>Kirjeldus</th>
-            <th>Loomise aeg</th>
-        </thead>
-        <tbody>
-            {% for doku in documents %}
-            <tr>
-                <td>{{ doku.document }}</td>
-                <td>{{ doku.name }}</td>
-                <td>{{ doku.description }}</td>
-                <td>{{ doku.created|date:'d.m.Y H:i' }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-        <div class="uk-alert uk-alert-danger">Selles kategoorias pole ühtegi dokumenti.</div>
-    {% endif %}
+    <div ng-controller="DocumentsController">
+        <h1>{{ title|title }}</h1>
+        {% if documents %}
+        <table class="uk-table">
+            <thead>
+                <th>Nr</th>
+                <th>Dokumendi nimi</th>
+                <th>Kirjeldus</th>
+                <th>Loomise aeg</th>
+            </thead>
+            <tbody>
+                {% for doku in documents %}
+                <tr>
+                    <td>{{ doku.document }}</td>
+                    <td><a data-document-url="{% url 'dokud.views.document' doku.document %}" ng-click="loadDocument($event)">{{ doku.name }}</a></td>
+                    <td>{{ doku.description }}</td>
+                    <td>{{ doku.created|date:'d.m.Y H:i' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <div class="uk-alert uk-alert-danger">Selles kategoorias pole ühtegi dokumenti.</div>
+        {% endif %}
+
+        <div id="document-modal" class="uk-modal">
+            <div class="uk-modal-dialog">
+                <a class="uk-modal-close uk-close"></a>
+                <h2>{[{ activeDocument.name }]}</h2>
+                <form class="uk-form">
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-id">Dokumendi ID</label>
+                        <input class="uk-width-3-4" id="doku-id" type="text" ng-model="activeDocument.document" disabled>
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-name">Dokumendi nimi</label>
+                        <input class="uk-width-3-4" id="doku-name" type="text" ng-model="activeDocument.name">
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-description">Kirjeldus</label>
+                        <textarea class="uk-width-3-4" id="doku-description" type="text" ng-model="activeDocument.description"></textarea>
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-created">Loomise aeg</label>
+                        <input class="uk-width-3-4" id="doku-created" type="text" value="{[{ activeDocument.created|date:'d.M.yyyy H:m' }]}" disabled>
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-created-by">Looja</label>
+                        <input class="uk-width-3-4" id="doku-created-by" type="text" ng-model="activeDocument.creator" disabled>
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-updated">Muutmise aeg</label>
+                        <input class="uk-width-3-4" id="doku-updated" type="text" value="{[{ activeDocument.updated|date:'d.M.yyyy H:m' }]}" disabled>
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-updated-by">Muutja</label>
+                        <input class="uk-width-3-4" id="doku-updated-by" type="text" ng-model="activeDocument.updater" disabled>
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-status">Staatus</label>
+                        <input class="uk-width-3-4" id="doku-status" type="text" ng-model="activeDocument.doc_status_type_fk" disabled>
+                    </div>
+                    <div class="uk-grid">
+                        <div class=""uk-width-1-1>Atribuudid:</div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
 {% endblock %}

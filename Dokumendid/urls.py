@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^documents/catalog/(?P<catalog_name>[-\w]+)/', 'dokud.views.catalog_list'),
     url(r'^documents/(?P<document_type>[-\w]+)/', 'dokud.views.documents_list'),
     url(r'^documents/', 'dokud.views.documents_list'),
+    url(r'^document/(?P<id>[-\w]+)', 'dokud.views.document'),
 ]

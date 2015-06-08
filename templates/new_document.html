@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block page_content %}
+    <div ng-controller="NewDocumentController">
+        <h1>Uus dokument</h1>
+
+        <form class="uk-form" ng-submit="saveForm()">
+            <input type='hidden' name='csrf_token' value='{[{ activeDocument.csrf_token }]}'>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-name">Dokumendi nimi</label>
+                <input class="uk-width-3-4" id="doku-name" type="text" ng-model="activeDocument.name">
+                <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors.name[0].message }]}</strong>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-type">Tüüp</label>
+                <select ng-options="type.key as type.value for type in activeDocument.types" ng-model="activeDocument.typeSelected" ng-change="typeUpdate()"></select>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-category">Kataloog</label>
+                <select ng-options="category.key as category.value for category in activeDocument.categories" ng-model="activeDocument.categorySelected"></select>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-description">Kirjeldus</label>
+                <textarea class="uk-width-3-4" id="doku-description" type="text" ng-model="activeDocument.description"></textarea>
+                <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors.description[0].message }]}</strong>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-status">Staatus</label>
+                <select ng-options="status.key as status.value for status in activeDocument.statuses" ng-model="activeDocument.statusSelected"></select>
+            </div>
+            <h4>Atribuudid</h4>
+            <div ng-repeat="attr in activeDocument.attributes">
+                <div class="uk-grid" ng-if="attr.type != 4">
+                    <label class="uk-form-label uk-width-1-4" for="doku-attr-{[{$index}]}">{[{ attr.name }]}</label>
+                    <input name="{[{attr.id}]}" class="uk-width-3-4" id="doku-attr-{[{$index}]}" type="text" ng-model="attr.value">
+                    <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors[attr.slug][0].message }]}</strong>
+                </div>
+                <div class="uk-grid" ng-if="attr.type == 4">
+                    <label class="uk-form-label uk-width-1-4" for="doku-attr-{[{$index}]}">{[{ attr.name }]}</label>
+                    <select name="{[{attr.id}]}" ng-options="selection.key as selection.value for selection in attr.selection_list" ng-model="attr.value" id="doku-attr-{[{$index}]}"></select>
+                    <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors[attr.slug][0].message }]}</strong>
+                </div>
+            </div>
+            <div class="uk-grid uk-container uk-container-center">
+                <button type="submit" class="uk-button uk-button-success uk-button-large uk-margin-top uk-align-center">Salvesta</button>
+            </div>
+        </form>
+
+    </div>
+{% endblock %}

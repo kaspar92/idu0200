@@ -1,0 +1,35 @@
+<div class="uk-panel uk-panel-box tree">
+    <ul>
+        <li class="top-level"><a href="{% url 'dokud.views.documents_list' %}">Dokumendid</a></li>
+        <ul>
+        {% for dt in document_types %}
+            <li>
+                <div><a href="{% url 'dokud.views.documents_list' document_type=dt.type_name|slugify %}">{{ dt.type_name }}</a></div>
+                <ul>
+                {% for st in dt.sub_types %}
+                    <li><a href="{% url 'dokud.views.documents_list' document_type=st.type_name|slugify %}">{{ st.type_name }}</a></li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
+    </ul>
+</div>
+
+<div class="uk-panel uk-panel-box tree">
+    <ul>
+        <li class="top-level"><a href="{% url 'dokud.views.documents_list' %}">Juurkataloog</a></li>
+        <ul>
+        {% for dc in document_catalogs %}
+            <li>
+                <div><a href="{% url 'dokud.views.catalog_list' catalog_name=dc.name|slugify %}">{{ dc.name }}</a></div>
+                <ul>
+                {% for sc in dc.sub_catalogs %}
+                    <li><a href="{% url 'dokud.views.catalog_list' catalog_name=sc.name|slugify %}">{{ sc.name }}</a></li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
+    </ul>
+</div>

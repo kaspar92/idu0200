@@ -19,8 +19,18 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^logout/', 'dokud.views.logout'),
+    url(r'^search/', 'dokud.views.search'),
+
     url(r'^documents/catalog/(?P<catalog_name>[-\w]+)/', 'dokud.views.catalog_list'),
     url(r'^documents/(?P<document_type>[-\w]+)/', 'dokud.views.documents_list'),
     url(r'^documents/', 'dokud.views.documents_list'),
+    url(r'^document/save/(?P<id>[-\w]+)', 'dokud.views.save_document'),
+    url(r'^document/save_new/', 'dokud.views.save_new_document'),
+    url(r'^document/delete/(?P<id>[-\w]+)', 'dokud.views.delete_document'),
     url(r'^document/(?P<id>[-\w]+)', 'dokud.views.document'),
+    url(r'^new_document/', 'dokud.views.new_document'),
+    url(r'^new_document_form/(?P<id>[-\w]+)', 'dokud.views.get_new_document_form'),
+
+    url(r'', 'dokud.views.login_view'),
 ]

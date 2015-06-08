@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+    <div ng-controller="SearchController"></div>
+        <h1>Otsing</h1>
+        <form class="uk-form" action="{% url 'dokud.views.search' %}" method="POST">
+            {% csrf_token %}
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-id">Dokumendi ID</label>
+                <input class="uk-width-3-4" id="doku-id" type="text" name="document">
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-name">Dokumendi nimi</label>
+                <input class="uk-width-3-4" id="doku-name" type="text" name="name">
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-description">Kirjeldus</label>
+                <textarea class="uk-width-3-4" id="doku-description" type="text" name="description"></textarea>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-type">Tüüp</label>
+                <input class="uk-width-3-4" id="doku-type" type="text" name="type" disabled>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-catalog">Kataloog</label>
+                <select name="catalog">
+                    <option selected></option>
+                    {% for catalog in catalogs_list %}
+                        <option value="{{ catalog.key }}">{{ catalog.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-created">Loomise aeg</label>
+                <input class="uk-width-3-4" id="doku-created" type="text" value="{[{ activeDocument.created|date:'d.M.yyyy H:m' }]}" disabled>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-created-by">Looja</label>
+                <input class="uk-width-3-4" id="doku-created-by" type="text" name="creator">
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-updated">Muutmise aeg</label>
+                <input class="uk-width-3-4" id="doku-updated" type="text" value="{[{ activeDocument.updated|date:'d.M.yyyy H:mm' }]}" disabled>
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-updated-by">Viimane muutja</label>
+                <input class="uk-width-3-4" id="doku-updated-by" type="text" name="updater">
+            </div>
+            <div class="uk-grid">
+                <label class="uk-form-label uk-width-1-4" for="doku-status">Staatus</label>
+                <select name="status">
+                    <option selected></option>
+                    {% for status in statuses_list %}
+                        <option value="{{ status.key }}">{{ status.value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <h4>Atribuudid</h4>
+            <div ng-repeat="attr in activeDocument.attributes">
+                <div class="uk-grid" ng-if="attr.type != 4">
+                    <label class="uk-form-label uk-width-1-4" for="doku-attr-{[{$index}]}">{[{ attr.name }]}</label>
+                    <input name="{[{attr.id}]}" class="uk-width-3-4" id="doku-attr-{[{$index}]}" type="text" ng-model="attr.value">
+                    <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors[attr.slug][0].message }]}</strong>
+                </div>
+                <div class="uk-grid" ng-if="attr.type == 4">
+                    <label class="uk-form-label uk-width-1-4" for="doku-attr-{[{$index}]}">{[{ attr.name }]}</label>
+                    <select name="{[{attr.id}]}" ng-options="selection.key as selection.value for selection in attr.selection_list" ng-model="attr.value" id="doku-attr-{[{$index}]}"></select>
+                    <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors[attr.slug][0].message }]}</strong>
+                </div>
+            </div>
+            <div class="uk-grid uk-container uk-container-center">
+                <button type="submit" class="uk-button uk-button-primary uk-button-large uk-margin-top uk-align-center">Otsi</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

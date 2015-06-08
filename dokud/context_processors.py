@@ -18,4 +18,7 @@ def sidebar(request):
         'document_catalogs': document_catalogs
     }
 
+    if request.session.get('user'):
+        data['user'] = request.session['user']
+
     return data

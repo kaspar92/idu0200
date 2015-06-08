@@ -17,27 +17,24 @@
     <body>
 
         <div class="uk-container uk-container-center uk-margin-top uk-margin-large-bottom">
-
             <nav class="uk-navbar uk-margin-large-bottom">
-                <a class="uk-navbar-brand uk-hidden-small" href="layouts_frontpage.html">Brand</a>
+                <a class="uk-navbar-brand uk-hidden-small" href="{% url 'dokud.views.documents_list' %}">Dokumendid</a>
                 <ul class="uk-navbar-nav uk-hidden-small">
-                    <li class="uk-active">
-                        <a href="layouts_frontpage.html">Frontpage</a>
+                    <li {% if active == "uus_dokument" %}class="uk-active"{% endif %}>
+                        <a href="{% url 'dokud.views.new_document' %}">Uus dokument</a>
                     </li>
-                    <li>
-                        <a href="layouts_portfolio.html">Portfolio</a>
+                    <li {% if active == "otsing" %}class="uk-active"{% endif %}>
+                        <a href="{% url 'dokud.views.search' %}">Otsing</a>
                     </li>
+                </ul>
+                <div class="uk-navbar-content uk-navbar-flip uk-hidden-small">
+                    <div class="uk-button-group">
+                        <a class="uk-button uk-button-danger" href="{% url 'dokud.views.logout' %}">Logi välja</a>
+                    </div>
+                </div>
+                <ul class="uk-navbar-nav uk-hidden-small uk-navbar-flip">
                     <li>
-                        <a href="layouts_blog.html">Blog</a>
-                    </li>
-                    <li>
-                        <a href="layouts_documentation.html">Documentation</a>
-                    </li>
-                    <li>
-                        <a href="layouts_contact.html">Contact</a>
-                    </li>
-                    <li>
-                        <a href="layouts_login.html">Login</a>
+                        <a>{{ user.first_name }} {{ user.last_name }}</a>
                     </li>
                 </ul>
                 <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
@@ -46,41 +43,7 @@
 
             <div class="uk-grid">
                 <div class="uk-width-1-5">
-                    <div class="uk-panel uk-panel-box tree">
-                        <ul>
-                            <li class="top-level"><a href="{% url 'dokud.views.documents_list' %}">Dokumendid</a></li>
-                            <ul>
-                            {% for dt in document_types %}
-                                <li>
-                                    <div><a href="{% url 'dokud.views.documents_list' document_type=dt.type_name|slugify %}">{{ dt.type_name }}</a></div>
-                                    <ul>
-                                    {% for st in dt.sub_types %}
-                                        <li><a href="{% url 'dokud.views.documents_list' document_type=st.type_name|slugify %}">{{ st.type_name }}</a></li>
-                                    {% endfor %}
-                                    </ul>
-                                </li>
-                            {% endfor %}
-                            </ul>
-                        </ul>
-                    </div>
-
-                    <div class="uk-panel uk-panel-box tree">
-                        <ul>
-                            <li class="top-level"><a href="{% url 'dokud.views.documents_list' %}">Juurkataloog</a></li>
-                            <ul>
-                            {% for dc in document_catalogs %}
-                                <li>
-                                    <div><a href="{% url 'dokud.views.catalog_list' catalog_name=dc.name|slugify %}">{{ dc.name }}</a></div>
-                                    <ul>
-                                    {% for sc in dc.sub_catalogs %}
-                                        <li><a href="{% url 'dokud.views.catalog_list' catalog_name=sc.name|slugify %}">{{ sc.name }}</a></li>
-                                    {% endfor %}
-                                    </ul>
-                                </li>
-                            {% endfor %}
-                            </ul>
-                        </ul>
-                    </div>
+                    {% include '_sidebar.html' %}
                 </div>
                 <div class="uk-width-4-5">
                     {% block page_content %}

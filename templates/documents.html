@@ -4,12 +4,13 @@
     <div ng-controller="DocumentsController">
         <h1>{{ title|title }}</h1>
         {% if documents %}
-        <table class="uk-table">
+        <table class="uk-table uk-table-middle">
             <thead>
                 <th>Nr</th>
                 <th>Dokumendi nimi</th>
                 <th>Kirjeldus</th>
                 <th>Loomise aeg</th>
+                <th></th>
             </thead>
             <tbody>
                 {% for doku in documents %}
@@ -18,6 +19,7 @@
                     <td><a data-document-url="{% url 'dokud.views.document' doku.document %}" ng-click="loadDocument($event)">{{ doku.name }}</a></td>
                     <td>{{ doku.description }}</td>
                     <td>{{ doku.created|date:'d.m.Y H:i' }}</td>
+                    <td><button class="uk-button uk-button-small uk-button-danger" ng-click="deleteDocument({{ doku.document }})"><i class="uk-icon-close"></i></button></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -26,11 +28,16 @@
             <div class="uk-alert uk-alert-danger">Selles kategoorias pole ühtegi dokumenti.</div>
         {% endif %}
 
+        {% if search %}
+            <a href="{% url 'dokud.views.search' %}" class="uk-button"><i class="uk-icon-search uk-margin-right"></i>Uus otsing</a>
+        {% endif %}
+
         <div id="document-modal" class="uk-modal">
             <div class="uk-modal-dialog">
                 <a class="uk-modal-close uk-close"></a>
                 <h2>{[{ activeDocument.name }]}</h2>
-                <form class="uk-form">
+                <form class="uk-form" ng-submit="saveForm(activeDocument.document)">
+                    <input type='hidden' name='csrf_token' value='{[{ activeDocument.csrf_token }]}'>
                     <div class="uk-grid">
                         <label class="uk-form-label uk-width-1-4" for="doku-id">Dokumendi ID</label>
                         <input class="uk-width-3-4" id="doku-id" type="text" ng-model="activeDocument.document" disabled>
@@ -38,10 +45,20 @@
                     <div class="uk-grid">
                         <label class="uk-form-label uk-width-1-4" for="doku-name">Dokumendi nimi</label>
                         <input class="uk-width-3-4" id="doku-name" type="text" ng-model="activeDocument.name">
+                        <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors.name[0].message }]}</strong>
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-type">Tüüp</label>
+                        <input class="uk-width-3-4" id="doku-type" type="text" ng-model="activeDocument.type" disabled>
+                    </div>
+                    <div class="uk-grid">
+                        <label class="uk-form-label uk-width-1-4" for="doku-catalog">Kataloog</label>
+                        <input class="uk-width-3-4" id="doku-catalog" type="text" ng-model="activeDocument.catalog" disabled>
                     </div>
                     <div class="uk-grid">
                         <label class="uk-form-label uk-width-1-4" for="doku-description">Kirjeldus</label>
                         <textarea class="uk-width-3-4" id="doku-description" type="text" ng-model="activeDocument.description"></textarea>
+                        <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors.description[0].message }]}</strong>
                     </div>
                     <div class="uk-grid">
                         <label class="uk-form-label uk-width-1-4" for="doku-created">Loomise aeg</label>
@@ -53,7 +70,7 @@
                     </div>
                     <div class="uk-grid">
                         <label class="uk-form-label uk-width-1-4" for="doku-updated">Muutmise aeg</label>
-                        <input class="uk-width-3-4" id="doku-updated" type="text" value="{[{ activeDocument.updated|date:'d.M.yyyy H:m' }]}" disabled>
+                        <input class="uk-width-3-4" id="doku-updated" type="text" value="{[{ activeDocument.updated|date:'d.M.yyyy H:mm' }]}" disabled>
                     </div>
                     <div class="uk-grid">
                         <label class="uk-form-label uk-width-1-4" for="doku-updated-by">Muutja</label>
@@ -61,10 +78,23 @@
                     </div>
                     <div class="uk-grid">
                         <label class="uk-form-label uk-width-1-4" for="doku-status">Staatus</label>
-                        <input class="uk-width-3-4" id="doku-status" type="text" ng-model="activeDocument.doc_status_type_fk" disabled>
+                        <select ng-options="status.key as status.value for status in activeDocument.statuses" ng-model="activeDocument.status"></select>
                     </div>
-                    <div class="uk-grid">
-                        <div class=""uk-width-1-1>Atribuudid:</div>
+                    <h4>Atribuudid</h4>
+                    <div ng-repeat="attr in activeDocument.attributes">
+                        <div class="uk-grid" ng-if="attr.type != 4">
+                            <label class="uk-form-label uk-width-1-4" for="doku-attr-{[{$index}]}">{[{ attr.name }]}</label>
+                            <input name="{[{attr.id}]}" class="uk-width-3-4" id="doku-attr-{[{$index}]}" type="text" ng-model="attr.value">
+                            <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors[attr.slug][0].message }]}</strong>
+                        </div>
+                        <div class="uk-grid" ng-if="attr.type == 4">
+                            <label class="uk-form-label uk-width-1-4" for="doku-attr-{[{$index}]}">{[{ attr.name }]}</label>
+                            <select name="{[{attr.id}]}" ng-options="selection.key as selection.value for selection in attr.selection_list" ng-model="attr.value" id="doku-attr-{[{$index}]}"></select>
+                            <strong class="uk-text-danger uk-width-3-4 uk-push-1-4 uk-error">{[{ errors[attr.slug][0].message }]}</strong>
+                        </div>
+                    </div>
+                    <div class="uk-grid uk-container uk-container-center">
+                        <button type="submit" class="uk-button uk-button-success uk-button-large uk-margin-top uk-align-center">Salvesta</button>
                     </div>
                 </form>
             </div>

@@ -107,7 +107,7 @@ class DocAttribute(models.Model):
     document_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     type_name = models.TextField(blank=True, null=True)
     value_text = models.TextField(blank=True, null=True)
-    value_number = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    value_number = models.DecimalField(max_digits=65535, decimal_places=2, blank=True, null=True)
     value_date = models.DateField(blank=True, null=True)
     data_type = models.DecimalField(max_digits=1, decimal_places=0, blank=True, null=True)
     orderby = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
@@ -235,13 +235,13 @@ class DocTypeAttribute(models.Model):
 
 
 class Document(models.Model):
-    document = models.DecimalField(primary_key=True, max_digits=10, decimal_places=0)
+    document = models.AutoField(primary_key=True)
     doc_nr = models.TextField(blank=True, null=True)
     name = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     created = models.DateTimeField(blank=True, null=True)
     created_by = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
-    updated = models.DateTimeField(blank=True, null=True)
+    updated = models.DateTimeField(blank=True, null=True, auto_now=True)
     updated_by = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     doc_status_type_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     filename = models.TextField(blank=True, null=True)
@@ -255,7 +255,7 @@ class DocumentDocCatalog(models.Model):
     document_doc_catalog = models.DecimalField(primary_key=True, max_digits=10, decimal_places=0)
     document_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     doc_catalog_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
-    catalog_time = models.DateTimeField(blank=True, null=True)
+    catalog_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False
@@ -263,7 +263,7 @@ class DocumentDocCatalog(models.Model):
 
 
 class DocumentDocType(models.Model):
-    document_doc_type = models.DecimalField(primary_key=True, max_digits=10, decimal_places=0)
+    document_doc_type = models.AutoField(primary_key=True)
     doc_type_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     document_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
 
@@ -273,7 +273,7 @@ class DocumentDocType(models.Model):
 
 
 class Employee(models.Model):
-    employee = models.DecimalField(primary_key=True, max_digits=10, decimal_places=0)
+    employee = models.IntegerField(primary_key=True)
     person_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     enterprise_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     struct_unit_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
@@ -373,7 +373,7 @@ class SubjectAttribute(models.Model):
     subject_type_fk = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     orderby = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     value_text = models.TextField(blank=True, null=True)
-    value_number = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    value_number = models.DecimalField(max_digits=65535, decimal_places=2, blank=True, null=True)
     value_date = models.DateField(blank=True, null=True)
     data_type = models.DecimalField(max_digits=1, decimal_places=0, blank=True, null=True)
 
